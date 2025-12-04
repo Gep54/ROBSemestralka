@@ -37,7 +37,7 @@ class Line(Component):
         # Plane origin is p1 (any point on line)
         origin = self.p1
 
-        return origin, u, v
+        return origin, d, u, v
     
 class Arc(Component):
     def __init__(self, center:np.array, diameter:float, angle_start:float, angle_end:float, plane:str):
