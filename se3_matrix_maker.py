@@ -1,4 +1,3 @@
-from ctu_crs import CRS97
 import numpy as np
 from numpy.typing import NDArray
 
@@ -8,6 +7,7 @@ def normalize(vector):
     if norm == 0:
         return vector  # Vrátí původní vektor, pokud je norm = 0
     return vector / norm
+
 
 def make_se3_matrix(circle_pos: NDArray, circle_arm_vector: NDArray, circle_normal_vector: NDArray,
                     toleranc: float = 0.001, circle_arm_length: float = 0.14):

@@ -1,22 +1,25 @@
 import numpy as np
 
+
 class Component:
     def __init__(self):
         pass
-    def get_descrete_points(self, num_of_points:int = 10)->np.array:
+
+    def get_descrete_points(self, num_of_points: int = 10) -> np.array:
         pass
 
+
 class Line(Component):
-    def __init__(self, p1:np.array, p2:np.array):
-        self.p1 = p1 # line start
-        self.p2 = p2 # line end
-    
-    def get_descrete_points(self, num_of_points:int = 10)->np.array:
+    def __init__(self, p1: np.array, p2: np.array):
+        self.p1 = p1  # line start
+        self.p2 = p2  # line end
+
+    def get_descrete_points(self, num_of_points: int = 10) -> np.array:
         t = np.linspace(0, 1, num_of_points)
 
         points = (1 - t)[:, None] * self.p1 + t[:, None] * self.p2
         return points
-    
+
     def get_normal_plane(self):
         # Direction vector of line
         d = self.p2 - self.p1
@@ -38,16 +41,17 @@ class Line(Component):
         origin = self.p1
 
         return origin, d, u, v
-    
+
+
 class Arc(Component):
-    def __init__(self, center:np.array, diameter:float, angle_start:float, angle_end:float, plane:str):
+    def __init__(self, center: np.array, diameter: float, angle_start: float, angle_end: float, plane: str):
         self.center = center
         self.radius = diameter / 2.0
         self.angle_start = angle_start
         self.angle_end = angle_end
         self.plane = plane
 
-    def get_descrete_points(self, num_of_points: int = 10)->np.array:
+    def get_descrete_points(self, num_of_points: int = 10) -> np.array:
         angles = np.linspace(self.angle_start, self.angle_end, num_of_points)
 
         if self.plane == "XY":
