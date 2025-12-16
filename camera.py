@@ -27,7 +27,7 @@ def rotationMatrixToEulerAngles(R):
 
 class Camera:
     def __init__(self):
-        self.aruco_size = 20.0
+        self.aruco_size = 40.0
         self.calibration_path = "camera_intrinsics.npz"
         self.calibration_data = np.load("camera_intrinsics.npz")
         self.intrinsic_matrix = self.calibration_data["camera_matrix"]
