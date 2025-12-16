@@ -9,11 +9,21 @@ def z_axis_rotation(z_angle):
                  [0, 0, 1]])
     return R
 
-def rotationMatrixToEulerXYZ(R):
-    x = np.arctan2(R[1, 0], R[0, 0])
-    y = np.arcsin(-R[2, 0])
-    z = np.arctan2(R[2, 1], R[2, 2])
-    return x, y, z
+def rotationMatrixToEulerAngles(R):
+    sy = np.sqrt(R[0,0]**2 + R[1,0]**2)
+
+    singular = sy < 1e-6
+
+    if not singular:
+        roll  = np.arctan2(R[2,1], R[2,2])
+        pitch = np.arctan2(-R[2,0], sy)
+        yaw   = np.arctan2(R[1,0], R[0,0])
+    else:
+        roll  = np.arctan2(-R[1,2], R[1,1])
+        pitch = np.arctan2(-R[2,0], sy)
+        yaw   = 0
+
+    return roll, pitch, yaw
 
 class Camera:
     def __init__(self):
@@ -26,50 +36,60 @@ class Camera:
         self.aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
         self.parameters = aruco.DetectorParameters()
 
+
     def detect_markers(self, img, draw=False):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         corners, ids, rejected = aruco.detectMarkers(
             gray, self.aruco_dict, parameters=self.parameters
         )
-        
+
         if draw and ids is not None:
             aruco.drawDetectedMarkers(img, corners, ids)
-        
+
         rvecs, tvecs, _ = aruco.estimatePoseSingleMarkers(
             corners,
             self.aruco_size,
             self.intrinsic_matrix,
             self.dist_coeffs
         )
-        
+
+        if draw and ids is not None:
+            for rvec, tvec in zip(rvecs, tvecs):
+                cv2.drawFrameAxes(
+                    img,
+                    self.intrinsic_matrix,
+                    self.dist_coeffs,
+                    rvec,
+                    tvec,
+                    self.aruco_size * 0.5  # axis length in meters
+                )
+
         return rvecs, tvecs, ids
+
+
 
     def get_mid_points(self, img):
         rvecs, tvecs, ids = self.detect_markers(img)
         print(ids)
-        # return None, None
-        # if len(markers_coords) != 2:
         if [1] in ids and [2] in ids:
             mid_point = np.mean(tvecs, axis = 0)
             R, _ = cv2.Rodrigues(rvecs[0])
-            x_rot, y_rot, z_rot = rotationMatrixToEulerXYZ(R)
-            # print("rot: ", x_rot*57.2957795, y_rot*57.2957795, z_rot*57.2957795)
-            R = z_axis_rotation(-1 * x_rot - np.pi)
+            roll, pitch, yaw = rotationMatrixToEulerAngles(R)
+            print(roll, pitch, yaw)
+            R = z_axis_rotation(-yaw)
             return mid_point[0], R
         else:
             return None, None
         
-            
-
 
 
 if __name__ == "__main__":
     # img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-22-00.bmp"))
     img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-23-54.bmp"))
     camera = Camera()
-    mid_point, R = camera.get_mid_points(img)
-    # rvecs, tvecs, ids = camera.detect_markers(img, draw=True)
+    mid_point, R = camera.get_yid_points(img)
+    rvecs, tvecs, ids = camera.detect_markers(img, draw=True)
     
     print(mid_point)
     print(R)
