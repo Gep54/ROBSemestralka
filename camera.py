@@ -76,7 +76,7 @@ class Camera:
             mid_point = np.mean(tvecs, axis = 0)
             R, _ = cv2.Rodrigues(rvecs[0])
             roll, pitch, yaw = rotationMatrixToEulerAngles(R)
-            print(roll, pitch, yaw)
+            # print(roll, pitch, yaw)
             R = z_axis_rotation(-yaw)
             return mid_point[0], R
         else:
