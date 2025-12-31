@@ -81,7 +81,42 @@ class Camera:
             return mid_point[0], R
         else:
             return None, None
-        
+
+    def transformFromCameraToRobot(self, robot_xyz, image_uv):
+        # objectPoints: Nx3 v robotické bázi (např. mm nebo m, ale konzistentně)
+        obj = np.array(robot_xyz, dtype=np.float64).reshape(-1, 3)
+
+        # imagePoints: Nx2 pixely
+        img = np.array(image_uv, dtype=np.float64).reshape(-1, 2)
+
+        # K, dist: z intrinsics kalibrace
+        K = self.intrinsic_matrix
+        dist = self.dist_coeffs
+
+        # robustně:
+        ok, rvec, tvec, inliers = cv2.solvePnPRansac(
+            obj, img, K, dist,
+            flags=cv2.SOLVEPNP_ITERATIVE,
+            reprojectionError=3.0,
+            iterationsCount=200
+        )
+        assert ok
+
+        # dooptimalizace jen na inliers:
+        obj_in = obj[inliers[:, 0]]
+        img_in = img[inliers[:, 0]]
+        ok, rvec, tvec = cv2.solvePnP(obj_in, img_in, K, dist, rvec, tvec, True)
+
+        R, = cv2.Rodrigues(rvec)
+
+        # kamera -> robot
+        R_RC = R.T
+        t_RC = -R.T @ tvec
+
+        T_RC = np.eye(4)
+        T_RC[:3, :3] = R_RC
+        T_RC[:3, 3] = t_RC.ravel()
+        print(T_RC)
 
 
 if __name__ == "__main__":
