@@ -11,6 +11,15 @@ def normalize(vector):
 
 def make_se3_matrix(circle_pos: NDArray, circle_arm_vector: NDArray, circle_normal_vector: NDArray,
                     tolerance: float = 0.001, circle_arm_length: float = 0.135):
+    """
+    IK of the hoop
+    :param circle_pos:
+    :param circle_arm_vector:
+    :param circle_normal_vector:
+    :param tolerance:
+    :param circle_arm_length:
+    :return:
+    """
     # TODO: write docstring
    
 
