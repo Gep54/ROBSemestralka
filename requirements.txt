@@ -43,3 +43,5 @@ traitlets==5.14.3
 wcwidth==0.2.14
 widgetsnbextension==4.0.15
 ctu-crs
+opencv-python
+opencv-contrib-python

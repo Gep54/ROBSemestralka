@@ -2,6 +2,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from components import Line, Arc
+from camera import Camera
+import cv2
+import os
+
+# img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-22-06.bmp"))
+# img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-23-54.bmp"))
+# img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-21-48.bmp"))
+
+# img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-23-27.bmp"))
+
+# camera = Camera()
+# rvecs, tvecs, ids = camera.detect_markers(img, draw=True)
+# cv2.imshow("img", img)
+# mid_point, R = camera.get_mid_points(img)
 
 
 class Puzzle:
@@ -21,25 +35,49 @@ class Puzzle:
 
     def get_forward_trajectory(self) -> np.array:
         points = [c.get_descrete_points() for c in self.components]
-        return np.flip(np.vstack([*points]))
+
+        points = np.flip(np.vstack([*points]))
+        M = np.array([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
+        points = [M @ p for p in points]
+        
+        points = [R @ p for p in points] # Rotation
+
+        return points   
 
     def get_reverse_trajectory(self) -> np.array:
         points = [c.get_descrete_points() for c in self.components]
-        return np.vstack([*points])
+
+        points = np.vstack([*points])        
+        points = [R @ p for p in points] # Rotation
+        # print(points.shape)
+        return points
 
     def show_forward_trajectory(self) -> None:
         points = self.get_forward_trajectory()
+        
+        points = np.array(points)
+
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
         ax.scatter(points[:, 0], points[:, 1], points[:, 2])
+        # ax.scatter(0, 0, 0)
+        ax.quiver(0, 0, 0, 100, 0, 0, color='red')
+        ax.quiver(0, 0, 0, 0, 100, 0, color='green')
+        ax.quiver(0, 0, 0, 0, 0, 100, color='blue')
         ax.set_aspect('equal')
         plt.show()
 
     def show_reverse_trajectory(self) -> None:
         points = self.get_reverse_trajectory()
+        points = np.array(points)
+        # points = [R @ p for p in points] # Rotation
+        
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
         ax.scatter(points[:, 0], points[:, 1], points[:, 2])
+        ax.quiver(0, 0, 0, 100, 0, 0, color='red')
+        ax.quiver(0, 0, 0, 0, 100, 0, color='green')
+        ax.quiver(0, 0, 0, 0, 0, 100, color='blue')
         ax.set_aspect('equal')
         plt.show()
 
@@ -188,6 +226,8 @@ class PuzzleE(Puzzle):
 
 
 if __name__ == "__main__":
-    puzzle = PuzzleE()
-    points = puzzle.get_forward_trajectory()
+    puzzle = PuzzleD()
+    # points = puzzle.get_forward_trajectory()
+    # puzzle.show_forward_trajectory()
+    points = puzzle.get_reverse_trajectory()
     puzzle.show_reverse_trajectory()
