@@ -24,9 +24,10 @@ class Puzzle:
         Defines unified methods get_points() and show()
     """
 
-    def __init__(self):
+    def __init__(self, rotation):
         self.puzzle_type: str = None
         self.components: list[Line, Arc] = None
+        self.R = rotation
 
     def _init_components(self) -> list[Line, Arc]:
         # NOTE that the return value is a list, if only one component is returned
@@ -37,18 +38,18 @@ class Puzzle:
         points = [c.get_descrete_points() for c in self.components]
 
         points = np.flip(np.vstack([*points]))
-        M = np.array([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
-        points = [M @ p for p in points]
-        
-        points = [R @ p for p in points] # Rotation
+        # M = np.array([[0, 0, 1], [0, 1, 0], [1, 0, 0]])
+        # points = [M @ p for p in points]
+        #
+        # points = [self.R @ p for p in points] # Rotation
 
         return points   
 
-    def get_reverse_trajectory(self) -> np.array:
-        points = [c.get_descrete_points() for c in self.components]
+    def get_reverse_trajectory(self, number_of_points=10) -> np.array:
+        points = [c.get_descrete_points(num_of_points=number_of_points) for c in self.components]
 
         points = np.vstack([*points])        
-        points = [R @ p for p in points] # Rotation
+        # points = [self.R @ p for p in points] # Rotation
         # print(points.shape)
         return points
 
@@ -89,7 +90,7 @@ class PuzzleA(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 0])
+        p1 = np.array([0, 0, 10])
         p2 = np.array([0, 0, 200])
         line1 = Line(p1, p2)
 
@@ -103,7 +104,7 @@ class PuzzleB(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 0])
+        p1 = np.array([0, 0, 10])
         p2 = np.array([0, 0, 80])
         line1 = Line(p1, p2)
 
@@ -127,7 +128,7 @@ class PuzzleC(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 0])
+        p1 = np.array([0, 0, 10])
         p2 = np.array([0, 0, 50])
         line1 = Line(p1, p2)
 
@@ -138,12 +139,12 @@ class PuzzleC(Puzzle):
 
         # ----- line3 -----
         p1 = np.array([-50, 0, 100])
-        p2 = np.array([-50, -50, 150])
+        p2 = np.array([-50, 50, 150])
         line3 = Line(p1, p2)
 
         # ----- line4 -----
-        p1 = np.array([-50, -50, 150])
-        p2 = np.array([-50, -50, 200])
+        p1 = np.array([-50, 50, 150])
+        p2 = np.array([-50, 50, 200])
         line4 = Line(p1, p2)
         return line1, line2, line3, line4
 
@@ -226,7 +227,9 @@ class PuzzleE(Puzzle):
 
 
 if __name__ == "__main__":
+    R = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     puzzle = PuzzleD()
+    puzzle.R = R
     # points = puzzle.get_forward_trajectory()
     # puzzle.show_forward_trajectory()
     points = puzzle.get_reverse_trajectory()
