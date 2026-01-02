@@ -90,7 +90,7 @@ class PuzzleA(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 10])
+        p1 = np.array([0, 0, 20])
         p2 = np.array([0, 0, 200])
         line1 = Line(p1, p2)
 
@@ -104,7 +104,7 @@ class PuzzleB(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 10])
+        p1 = np.array([0, 0, 20])
         p2 = np.array([0, 0, 80])
         line1 = Line(p1, p2)
 
@@ -128,7 +128,7 @@ class PuzzleC(Puzzle):
 
     def _init_components(self) -> list:
         # ----- line1 -----
-        p1 = np.array([0, 0, 10])
+        p1 = np.array([0, 0, 20])
         p2 = np.array([0, 0, 50])
         line1 = Line(p1, p2)
 

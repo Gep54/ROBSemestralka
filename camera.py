@@ -121,7 +121,8 @@ class Camera:
         T_RC = np.eye(4)
         T_RC[:3, :3] = R_RC
         T_RC[:3, 3] = t_RC.ravel()
-        print(T_RC)
+        # print(T_RC)
+        return T_RC
 
     def cameraToRobot(self, cameraCoord, T_RC=None):
         """
