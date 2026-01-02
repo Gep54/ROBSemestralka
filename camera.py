@@ -123,21 +123,18 @@ class Camera:
         T_RC[:3, 3] = t_RC.ravel()
         print(T_RC)
 
-    def cameraToRobot(self, cameraCoord):
+    def cameraToRobot(self, cameraCoord, T_RC=None):
         """
         returns position of aruco code middle in robot coordinates in m
         :param cameraCoord:
         :return:
         """
 
-        T_RC = [[-4.91410691e-03, 9.98341087e-01, -5.73665839e-02, 4.90644721e+02],
+        if T_RC is None:
+            T_RC = [[-4.91410691e-03, 9.98341087e-01, -5.73665839e-02, 4.90644721e+02],
                 [9.97906036e-01, 1.19594619e-03, -6.46692634e-02, 2.38816422e+01],
                 [-6.44933754e-02, -5.75642520e-02, -9.96256474e-01, 1.19549166e+03],
                 [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
-        # [[-0.05876807, 0.99562368, -0.07266219, 0.50924364],
-        #  [0.99808416, 0.05719049, -0.02360613, -0.01328189],
-        #  [-0.01934724, -0.07391027, -0.99707721, 1.20215746],
-        #  [0., 0., 0., 1.]]
         p_cam_h = np.append(cameraCoord, 1.0)
         p_robot_h = T_RC @ p_cam_h
         p_robot = p_robot_h[:3] * 0.001
