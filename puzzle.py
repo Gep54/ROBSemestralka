@@ -17,11 +17,12 @@ import os
 # cv2.imshow("img", img)
 # mid_point, R = camera.get_mid_points(img)
 
+ 
 
 class Puzzle:
     """
         Parent Puzzle class - defines general template for other children puzzles
-        Defines unified methods get_points() and show()
+        Defines unified methods get_points() and show() som
     """
 
     def __init__(self, rotation):
