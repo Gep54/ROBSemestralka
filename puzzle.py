@@ -2,9 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from components import Line, Arc
-from camera import Camera
-import cv2
-import os
+
 
 # img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-22-06.bmp"))
 # img = cv2.imread(os.path.join("podlozka", "Image__2025-11-26__11-23-54.bmp"))
@@ -17,7 +15,6 @@ import os
 # cv2.imshow("img", img)
 # mid_point, R = camera.get_mid_points(img)
 
- 
 
 class Puzzle:
     """
@@ -44,19 +41,19 @@ class Puzzle:
         #
         # points = [self.R @ p for p in points] # Rotation
 
-        return points   
+        return points
 
     def get_reverse_trajectory(self, number_of_points=10) -> np.array:
         points = [c.get_descrete_points(num_of_points=number_of_points) for c in self.components]
 
-        points = np.vstack([*points])        
+        points = np.vstack([*points])
         # points = [self.R @ p for p in points] # Rotation
         # print(points.shape)
         return points
 
     def show_forward_trajectory(self) -> None:
         points = self.get_forward_trajectory()
-        
+
         points = np.array(points)
 
         fig = plt.figure()
@@ -73,7 +70,7 @@ class Puzzle:
         points = self.get_reverse_trajectory()
         points = np.array(points)
         # points = [R @ p for p in points] # Rotation
-        
+
         fig = plt.figure()
         ax = fig.add_subplot(projection="3d")
         ax.scatter(points[:, 0], points[:, 1], points[:, 2])

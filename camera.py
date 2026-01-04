@@ -1,29 +1,30 @@
 import cv2
-import numpy as np
 import cv2.aruco as aruco
-import os
+
 
 def z_axis_rotation(z_angle):
-    R = np.array([[np.cos(z_angle), -np.sin(z_angle), 0], 
-                 [np.sin(z_angle), np.cos(z_angle), 0], 
-                 [0, 0, 1]])
+    R = np.array([[np.cos(z_angle), -np.sin(z_angle), 0],
+                  [np.sin(z_angle), np.cos(z_angle), 0],
+                  [0, 0, 1]])
     return R
 
+
 def rotationMatrixToEulerAngles(R):
-    sy = np.sqrt(R[0,0]**2 + R[1,0]**2)
+    sy = np.sqrt(R[0, 0] ** 2 + R[1, 0] ** 2)
 
     singular = sy < 1e-6
 
     if not singular:
-        roll  = np.arctan2(R[2,1], R[2,2])
-        pitch = np.arctan2(-R[2,0], sy)
-        yaw   = np.arctan2(R[1,0], R[0,0])
+        roll = np.arctan2(R[2, 1], R[2, 2])
+        pitch = np.arctan2(-R[2, 0], sy)
+        yaw = np.arctan2(R[1, 0], R[0, 0])
     else:
-        roll  = np.arctan2(-R[1,2], R[1,1])
-        pitch = np.arctan2(-R[2,0], sy)
-        yaw   = 0
+        roll = np.arctan2(-R[1, 2], R[1, 1])
+        pitch = np.arctan2(-R[2, 0], sy)
+        yaw = 0
 
     return roll, pitch, yaw
+
 
 class Camera:
     def __init__(self):
@@ -32,10 +33,9 @@ class Camera:
         self.calibration_data = np.load("camera_intrinsics.npz")
         self.intrinsic_matrix = self.calibration_data["camera_matrix"]
         self.dist_coeffs = self.calibration_data["dist_coeffs"]
-    
+
         self.aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
         self.parameters = aruco.DetectorParameters()
-
 
     def detect_markers(self, img, draw=False):
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -67,13 +67,11 @@ class Camera:
 
         return rvecs, tvecs, ids
 
-
-
     def get_mid_points(self, img):
         rvecs, tvecs, ids = self.detect_markers(img)
         print(ids)
         if [1] in ids and [2] in ids:
-            mid_point = np.mean(tvecs, axis = 0)
+            mid_point = np.mean(tvecs, axis=0)
             R, _ = cv2.Rodrigues(rvecs[0])
             roll, pitch, yaw = rotationMatrixToEulerAngles(R)
             # print(roll, pitch, yaw)
@@ -112,7 +110,7 @@ class Camera:
         img_in = img[inliers[:, 0]]
         ok, rvec, tvec = cv2.solvePnP(obj_in, img_in, K, dist, rvec, tvec, True)
 
-        R,_ = cv2.Rodrigues(rvec)
+        R, _ = cv2.Rodrigues(rvec)
 
         # kamera -> robot
         R_RC = R.T
@@ -133,9 +131,9 @@ class Camera:
 
         if T_RC is None:
             T_RC = [[-4.91410691e-03, 9.98341087e-01, -5.73665839e-02, 4.90644721e+02],
-                [9.97906036e-01, 1.19594619e-03, -6.46692634e-02, 2.38816422e+01],
-                [-6.44933754e-02, -5.75642520e-02, -9.96256474e-01, 1.19549166e+03],
-                [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
+                    [9.97906036e-01, 1.19594619e-03, -6.46692634e-02, 2.38816422e+01],
+                    [-6.44933754e-02, -5.75642520e-02, -9.96256474e-01, 1.19549166e+03],
+                    [0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 1.00000000e+00]]
         p_cam_h = np.append(cameraCoord, 1.0)
         p_robot_h = T_RC @ p_cam_h
         p_robot = p_robot_h[:3] * 0.001

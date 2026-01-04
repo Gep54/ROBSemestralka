@@ -41,7 +41,8 @@ class Line(Component):
         origin = self.p1
 
         return origin, u, v
-    
+
+
 class Arc(Component):
     def __init__(self, center: np.array, diameter: float, angle_start: float, angle_end: float, plane: str):
         self.center = center

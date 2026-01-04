@@ -1,8 +1,9 @@
 from time import sleep
+
 import numpy as np
+
 import PoseComposer
 import camera
-
 
 
 def move_robot_to(position, robot):
@@ -12,8 +13,8 @@ def move_robot_to(position, robot):
     robot.move_to_q(configuration)
     robot.wait_for_motion_stop()
 
-def robot_configuration_maker(position, robot, q0):
 
+def robot_configuration_maker(position, robot, q0):
     ik_sols = robot.ik(position)
     if len(ik_sols) == 0:
         return None
@@ -93,6 +94,7 @@ def solve_maze(puzzle, robot, T_RC, normal_vector=np.array([0, 0, 1])):
     robot.soft_home()
 
     return 1
+
 
 def solution(puzzle, robot, T_RC, arm_vector=np.array([-1, 1, 0]), normal_vector=np.array([0, 0, 1])):
     robot.soft_home()
