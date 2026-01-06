@@ -56,10 +56,10 @@ def arm_vector_decider(maze_f_robot_coord, normal, robot):
     return arm_vector
 
 
-def solve_maze(maze, robot, T_RC, normal_vector=np.array([0, 0, 1])):
+def solve_maze(maze, robot, T_RC, normal_vector=np.array([0, 0, 1]), mat_thickness=30):
     robot.soft_home()
 
-    maze_f_robot_coord = handle_camera_coords(robot, maze, T_RC, mat_thickness=25)
+    maze_f_robot_coord = handle_camera_coords(robot, maze, T_RC, mat_thickness=mat_thickness)
 
     start = maze_f_robot_coord[0].copy()
     start[2] += 0.05
