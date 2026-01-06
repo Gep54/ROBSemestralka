@@ -11,8 +11,16 @@ def normalize(vector):
 
 def make_se3_matrix(circle_pos: NDArray, circle_arm_vector: NDArray, circle_normal_vector: NDArray,
                     tolerance: float = 0.001, circle_arm_length: float = 0.135):
+    """
+    IK of the hoop
+    :param circle_pos:
+    :param circle_arm_vector:
+    :param circle_normal_vector:
+    :param tolerance:
+    :param circle_arm_length:
+    :return:
+    """
     # TODO: write docstring
-   
 
     # check that the normal and arm vectors are perpendicular
     assert (np.isclose(np.dot(circle_arm_vector, circle_normal_vector), 0.0, atol=tolerance))
@@ -57,7 +65,7 @@ def rotate_vector(v, axis, angle):
 
 
 def find_options_around_point(circle_pos: NDArray, circle_normal_vector: NDArray, angle: float = 45, n_steps: int = 8,
-                                first_vector: NDArray = None, tolerance: float = 0.001, arm_length: float = 0.14):
+                              first_vector: NDArray = None, tolerance: float = 0.001, arm_length: float = 0.135):
     # TODO: docstring
     assert (first_vector is None or np.isclose(np.dot(first_vector, circle_normal_vector), 0.0, atol=tolerance))
 

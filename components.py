@@ -17,7 +17,7 @@ class Line(Component):
     def get_descrete_points(self, num_of_points: int = 10) -> np.array:
         t = np.linspace(0, 1, num_of_points)
 
-        points = (1 - t)[:, None] * self.p1 + t[:, None] * self.p2 *0.001
+        points = (1 - t)[:, None] * self.p1 + t[:, None] * self.p2
         return points
 
     def get_normal_plane(self):
@@ -41,7 +41,8 @@ class Line(Component):
         origin = self.p1
 
         return origin, u, v
-    
+
+
 class Arc(Component):
     def __init__(self, center: np.array, diameter: float, angle_start: float, angle_end: float, plane: str):
         self.center = center
