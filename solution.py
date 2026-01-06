@@ -18,19 +18,18 @@ def robot_configuration_maker(position, robot, q0):
     ik_sols = robot.ik(position)
     if len(ik_sols) == 0:
         return None
-    # assert len(ik_sols) > 0
     closest_configuration = min(ik_sols, key=lambda q: np.linalg.norm(q - q0))
     if not robot.in_limits(closest_configuration):
         return None
     return closest_configuration
 
 
-def handle_camera_coords(robot, puzzle, T_RC, mat_thickness=35):
+def handle_camera_coords(robot, maze, T_RC, mat_thickness=35):
     cam = camera.Camera()
     img = robot.grab_image()
     midpoint, R = cam.get_mid_points(img)
     midpoint[2] -= mat_thickness
-    trajectory_R = puzzle.get_reverse_trajectory()
+    trajectory_R = maze.get_reverse_trajectory()
     trajectory_F = trajectory_R[::-1]
     trajectory_F[:, 2] *= -1
     trajectory_F_camera_coord = trajectory_F @ R + midpoint
@@ -41,10 +40,11 @@ def handle_camera_coords(robot, puzzle, T_RC, mat_thickness=35):
 def arm_vector_decider(maze_f_robot_coord, normal, robot):
     first = maze_f_robot_coord[0].copy()
     _, vectors = PoseComposer.find_options_around_point(first, normal)
+    vectors = [tuple(v) for v in vectors]
     for vector in vectors:
         q0 = robot.q_home
         for point in maze_f_robot_coord:
-            pose = PoseComposer.make_se3_matrix(vector, point, normal)
+            pose = PoseComposer.make_se3_matrix(point, vector, normal)
             robot_config = robot_configuration_maker(pose, robot, q0)
             q0 = robot_config
             if robot_config is None:
@@ -56,13 +56,14 @@ def arm_vector_decider(maze_f_robot_coord, normal, robot):
     return arm_vector
 
 
-def solve_maze(puzzle, robot, T_RC, normal_vector=np.array([0, 0, 1])):
+def solve_maze(maze, robot, T_RC, normal_vector=np.array([0, 0, 1])):
     robot.soft_home()
 
-    maze_f_robot_coord = handle_camera_coords(robot, puzzle, T_RC)
+    maze_f_robot_coord = handle_camera_coords(robot, maze, T_RC, mat_thickness=25)
 
     start = maze_f_robot_coord[0].copy()
     start[2] += 0.05
+
     arm_vector = arm_vector_decider(maze_f_robot_coord, normal_vector, robot)
     if arm_vector is None:
         raise Exception('No valid arm vector found')
@@ -71,7 +72,7 @@ def solve_maze(puzzle, robot, T_RC, normal_vector=np.array([0, 0, 1])):
     i = 0
     poses = []
     for point in maze_f_robot_coord:
-        pose = PoseComposer.make_se3_matrix(arm_vector, point, normal_vector)
+        pose = PoseComposer.make_se3_matrix(point, arm_vector, normal_vector)
         poses.append(pose)
         print(f"{i}: {pose[:3, -1]}")
         i += 1
@@ -85,7 +86,7 @@ def solve_maze(puzzle, robot, T_RC, normal_vector=np.array([0, 0, 1])):
     for pose in poses:
         move_robot_to(pose, robot)
 
-    sleep(1000)
+    sleep(2)
 
     for pose in poses[::-1]:
         move_robot_to(pose, robot)
