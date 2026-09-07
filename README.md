@@ -45,6 +45,7 @@ camera image  →  ArUco pose  →  maze points in camera frame
 | [`Planning.ipynb`](Planning.ipynb) | Offline IK feasibility checks for hoop directions |
 | [`Find aruco, move robot hoop there.ipynb`](Find%20aruco,%20move%20robot%20hoop%20there.ipynb) | Early detection + motion experiments |
 | [`Camera test.ipynb`](Camera%20test.ipynb) | Camera / marker debugging |
+| [`docs/ROB_report.pdf`](docs/ROB_report.pdf) | Project report |
 
 ---
 
