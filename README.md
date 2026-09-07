@@ -145,8 +145,7 @@ At runtime, `get_mid_points` detects markers `1` and `2`, averages their transla
 
 ## Authors
 
-| Name |
-| --- |
+
 | Václav Beran |
 | Mathias Palme |
 | Tomáš Janoušek |
