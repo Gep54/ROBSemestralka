@@ -146,8 +146,6 @@ At runtime, `get_mid_points` detects markers `1` and `2`, averages their transla
 ## Authors
 
 
-| Václav Beran |
-| Mathias Palme |
-| Tomáš Janoušek |
+Václav Beran, Mathias Palme, Tomáš Janoušek
 
 FEL ČVUT, course **ROB** (Robotics).
