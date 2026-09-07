@@ -2,7 +2,7 @@
 
 **Vision-guided maze threading on the CRS97 robot**
 
-Semester project by [Václav Beran](mailto:beranva6@fel.cvut.cz), Mathias Palme, and Tomáš Janoušek  
+Semester project by Václav Beran, Mathias Palme, and Tomáš Janoušek  
 Czech Technical University in Prague — Faculty of Electrical Engineering
 
 The robot holds a hoop on its end effector. A calibrated camera finds the maze on the table via ArUco markers, the planned path is transformed into robot coordinates, and the arm threads the hoop through the maze and back out.
