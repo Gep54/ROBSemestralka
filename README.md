@@ -11,7 +11,7 @@ The robot holds a hoop on its end effector. A calibrated camera finds the maze o
 
 ## What this project does
 
-Physical maze pieces (puzzles A–E) sit on a marked base. Each maze is a 3D path made of line segments and arcs. The software:
+Physical maze pieces (puzzles A–C) sit on a marked base. Each maze is a 3D path made of line segments. The software:
 
 1. **Sees** the maze with the robot camera (ArUco IDs `1` and `2` on the base)
 2. **Places** a known geometric model of that maze into the camera frame
@@ -34,7 +34,7 @@ camera image  →  ArUco pose  →  maze points in camera frame
 | File | Role |
 | --- | --- |
 | [`solution.py`](solution.py) | Main pipeline: detect maze, plan hoop poses, execute forward and reverse motion |
-| [`puzzle.py`](puzzle.py) | Geometric models of mazes A–E as sequences of lines and arcs, origin at the base center |
+| [`puzzle.py`](puzzle.py) | Geometric models of mazes A–C as sequences of lines, origin at the base center |
 | [`components.py`](components.py) | `Line` and `Arc` primitives that sample discrete 3D points |
 | [`PoseComposer.py`](PoseComposer.py) | Builds the hoop’s SE(3) pose from a path point, hoop normal, and arm direction |
 | [`camera.py`](camera.py) | ArUco detection, camera-to-robot calibration (`solvePnP`), and point transforms |
@@ -57,13 +57,11 @@ Paths are defined in millimetres relative to the centre of the base, then sample
 | **A** | Straight vertical line |
 | **B** | Vertical → diagonal → vertical |
 | **C** | Four-segment 3D polyline |
-| **D** | Lines plus an arc in the XZ plane |
-| **E** | 3D polyline plus an arc in the YZ plane |
 
 ```python
-from puzzle import PuzzleD
+from puzzle import PuzzleC
 
-maze = PuzzleD()
+maze = PuzzleC()
 maze.show_reverse_trajectory()   # 3D matplotlib preview
 points = maze.get_reverse_trajectory(number_of_points=10)
 ```
@@ -112,7 +110,7 @@ solution.solve_maze(maze, robot, T_RC, mat_thickness=30)
 
 `solve_maze` prints the planned Cartesian waypoints and asks for confirmation (`Y/n`) before moving. After a short pause at the far end, the arm retraces the path and soft-homes.
 
-The same flow is in [`Showing.ipynb`](Showing.ipynb). Swap `PuzzleA` for `PuzzleB`–`PuzzleE` as needed.
+The same flow is in [`Showing.ipynb`](Showing.ipynb). Swap `PuzzleA` for `PuzzleB` or `PuzzleC` as needed.
 
 `mat_thickness` (mm) accounts for the physical height of the base plate under the ArUco markers so the hoop is aimed at the maze, not the marker plane.
 
